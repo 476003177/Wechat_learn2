@@ -7,7 +7,7 @@
   <!-- 区域2：文本区域 -->
   <text>19°C 多云</text>
   <!-- 区域3：图片区域 -->
-  <image src='/images/w.jpg'></image>
+  <image src='/images/999.png'></image>
   <!-- 区域4：多行天气信息 -->
   <view class="detail">
     <view class="bar">
