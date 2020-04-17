@@ -1,7 +1,8 @@
 <view class="container">
   <!-- 区域1：地区选择器 -->
-  <picker mode='region'>
-    <view>北京市</view>
+  <!-- <picker>是从底部弹起的滚动选择器组件，目前根据mode属性值的不同共支持5种选择器，分别是普通选择器，多列选择器，时间选择器，日期选择器，省市区选择器。若省略mode值不写，则默认效果是普通选择器。 -->
+  <picker mode='region' bindchange="changeRegion">
+    <view>{{region}}</view>
   </picker>
   <!-- 区域2：文本区域 -->
   <text>19°C 多云</text>
