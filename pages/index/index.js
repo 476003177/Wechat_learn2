@@ -5,11 +5,28 @@ Page({
    * 页面的初始数据
    */
   data: {
-    region:["广东省","佛山市","顺德区"]
+    region:["广东省","佛山市","顺德区"],
+    now:""
   },
   changeRegion:function(e){
     this.setData({
       region:e.detail.value
+    }),
+    this.getWeather();//更新天气
+  },
+  getWeather:function(){
+    var that=this;//this不可以直接在微信api函数内部使用
+    wx.request({
+      url: 'https://free-api.heweather.net/s6/weather/now?',
+      data: {
+        //自动填补url为"https://free-api.heweather.net/s6/weather/now?location=that.data.region[1]&key=d02f0bf029e24d8a9fca718ac469a62c"
+        location:that.data.region[1],
+        key:"d02f0bf029e24d8a9fca718ac469a62c"
+      },
+      success:function(res){
+        console.log(res.data);//如果执行getWeather成功就返回到控制台
+        that.setData({ now: res.data.HeWeather6[0].now})
+      }
     })
   },
 
@@ -17,7 +34,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    this.getWeather();//页面一加载就调用getWeather
   },
 
   /**

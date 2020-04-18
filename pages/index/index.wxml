@@ -5,9 +5,9 @@
     <view>{{region}}</view>
   </picker>
   <!-- 区域2：文本区域 -->
-  <text>19°C 多云</text>
+  <text>{{now.tmp}}°C {{now.cond_txt}}</text>
   <!-- 区域3：图片区域 -->
-  <image src='/images/999.png'></image>
+  <image src='/images/{{now.cond_code}}.png'></image>
   <!-- 区域4：多行天气信息 -->
   <view class="detail">
     <view class="bar">
@@ -16,9 +16,9 @@
       <view class='box'>能见度</view>
     </view>
     <view class="bar">
-      <view class='box'>0%</view>
-      <view class='box'>0hpa</view>
-      <view class='box'>0km</view>
+      <view class='box'>{{now.hum}}</view>
+      <view class='box'>{{now.pres}}hpa</view>
+      <view class='box'>{{now.vis}}km</view>
     </view>
     <view class="bar">
       <view class='box'>风向</view>
@@ -26,9 +26,9 @@
       <view class='box'>风力</view>
     </view>
     <view class="bar">
-      <view class='box'>0</view>
-      <view class='box'>0km/h</view>
-      <view class='box'>0级</view>
+      <view class='box'>{{now.wind_dir}}</view>
+      <view class='box'>{{now.wind_spd}}km/h</view>
+      <view class='box'>{{now.wind_sc}}级</view>
     </view>
   </view>
 </view>
