@@ -34,6 +34,12 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    // 获取经纬度，需要获取用户授权，即在app.json中加入permission内容
+    wx.getLocation({
+      success:function(res){
+        console.log(res.latitude, res.longitude)
+      },
+    })
     this.getWeather();//页面一加载就调用getWeather
   },
 
