@@ -6,7 +6,7 @@ Page({
    */
   data: {
     region:["广东省","佛山市","顺德区"],
-    now:""
+    now:{cond_code:"100"}//先预设一个值，避免报错图片读取错误
   },
   changeRegion:function(e){
     this.setData({
