@@ -1,12 +1,15 @@
 // pages/index/index.js
+var bmap = require('../../libs/bmap-wx/bmap-wx.min.js');
+var wxMarkerData = [];	//定位成功回调对象
 Page({
-
   /**
    * 页面的初始数据
    */
   data: {
-    region:["广东省","佛山市","顺德区"],
-    now:{cond_code:"100"}//先预设一个值，避免报错图片读取错误
+    ak:"pmXnsrkVKvIY9EVug7RPYOoxUhT2pjS1",	//百度地图的ak
+    region:["北京市","北京市","东城区"],
+    now:{cond_code:"100"},//先预设一个值，避免报错图片读取错误
+    location: ""
   },
   changeRegion:function(e){
     this.setData({
@@ -14,7 +17,9 @@ Page({
     }),
     this.getWeather();//更新天气
   },
+
   getWeather:function(){
+    // 和风天气api接口文档：https://dev.heweather.com/docs/api/weather
     var that=this;//this不可以直接在微信api函数内部使用
     wx.request({
       url: 'https://free-api.heweather.net/s6/weather/now?',
@@ -25,9 +30,42 @@ Page({
       },
       success:function(res){
         console.log(res.data);//如果执行getWeather成功就返回到控制台
-        that.setData({ now: res.data.HeWeather6[0].now})
+        that.setData({
+          now: res.data.HeWeather6[0].now,
+        })
+        // console.log(that.data.now)
       }
     })
+  },
+
+  getcity_fromlocat: function(){
+    var that = this;
+    /* 获取定位地理位置 */
+    // 新建bmap对象 
+    var BMap = new bmap.BMapWX({ 
+        ak: that.data.ak 
+    }); 
+    var fail = function(data) { 
+        console.log(data);
+    }; 
+    var success = function(data) { 
+        //返回数据内，已经包含经纬度
+        // console.log(data);
+        //使用wxMarkerData获取数据
+        wxMarkerData = data.wxMarkerData;  
+        //获取城市数据
+        var cityinfo = data.originalData.result.addressComponent;  
+        
+        //把所有数据放在初始化data内
+        that.setData({ 
+          region: [cityinfo["province"], cityinfo["city"], cityinfo["district"]]
+        }); 
+    } 
+    // 发起regeocoding检索请求 
+    BMap.regeocoding({ 
+        fail: fail, 
+        success: success
+    });     
   },
 
   /**
@@ -35,11 +73,18 @@ Page({
    */
   onLoad: function (options) {
     // 获取经纬度，需要获取用户授权，即在app.json中加入permission内容
-    wx.getLocation({
-      success:function(res){
-        console.log(res.latitude, res.longitude)
-      },
-    })
+    // var that = this
+    // wx.getLocation({
+    //   success:function(res){
+    //     console.log(res.latitude, res.longitude)
+    //     var locat = res.latitude.toString() + "," + res.longitude.toString()//将经纬度拼接成字符串，便于和风天气传参
+    //     that.data.location = locat
+    //   },
+    // })
+
+    // 页面一加载就调用百度地图api更新地址
+    // 百度地图指南：https://lbs.baidu.com/index.php?title=wxjsapi/guide/helloworld
+    this.getcity_fromlocat();
     this.getWeather();//页面一加载就调用getWeather
   },
 
