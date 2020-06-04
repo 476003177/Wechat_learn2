@@ -40,32 +40,38 @@ Page({
 
   getcity_fromlocat: function(){
     var that = this;
-    /* 获取定位地理位置 */
-    // 新建bmap对象 
-    var BMap = new bmap.BMapWX({ 
-        ak: that.data.ak 
-    }); 
-    var fail = function(data) { 
-        console.log(data);
-    }; 
-    var success = function(data) { 
-        //返回数据内，已经包含经纬度
-        // console.log(data);
-        //使用wxMarkerData获取数据
-        wxMarkerData = data.wxMarkerData;  
-        //获取城市数据
-        var cityinfo = data.originalData.result.addressComponent;  
-        
-        //把所有数据放在初始化data内
-        that.setData({ 
-          region: [cityinfo["province"], cityinfo["city"], cityinfo["district"]]
-        }); 
-    } 
-    // 发起regeocoding检索请求 
-    BMap.regeocoding({ 
-        fail: fail, 
-        success: success
-    });     
+    // 异步转同步处理
+    var p = new Promise(function(resolve, reject) {
+      /* 获取定位地理位置 */
+      // 新建bmap对象 
+      var BMap = new bmap.BMapWX({ 
+          ak: that.data.ak 
+      }); 
+      var fail = function(data) { 
+          console.log(data);
+          reject("调用百度api失败");
+      }; 
+      var success = function(data) { 
+          //返回数据内，已经包含经纬度
+          // console.log(data);
+          //使用wxMarkerData获取数据
+          wxMarkerData = data.wxMarkerData;  
+          //获取城市数据
+          var cityinfo = data.originalData.result.addressComponent;  
+          
+          //把所有数据放在初始化data内
+          that.setData({ 
+            region: [cityinfo["province"], cityinfo["city"], cityinfo["district"]]
+          }); 
+          resolve("调用百度api成功");
+      } 
+      // 发起regeocoding检索请求 
+      BMap.regeocoding({ 
+          fail: fail, 
+          success: success
+      });
+    });
+    return p
   },
 
   /**
@@ -82,10 +88,9 @@ Page({
     //   },
     // })
 
-    // 页面一加载就调用百度地图api更新地址
+    // 页面一加载就调用百度地图api更新地址，并调用getWeather更新天气数据
     // 百度地图指南：https://lbs.baidu.com/index.php?title=wxjsapi/guide/helloworld
-    this.getcity_fromlocat();
-    this.getWeather();//页面一加载就调用getWeather
+    this.getcity_fromlocat().then(this.getWeather);//同步处理，先执行完getcity_fromlocat再执行getWeather
   },
 
   /**
